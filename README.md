@@ -22,14 +22,14 @@ composer require nmarniesse/pomm-filter
 ## Usage
 
 The library helps you to create an instance of `PommProject\Foundation\Where` that you could use in every pomm query
-(see https://github.com/pomm-project/Foundation/blob/master/documentation/foundation.rst#where-the-condition-builder
+(see [here](https://github.com/pomm-project/Foundation/blob/master/documentation/foundation.rst#where-the-condition-builder)
 for further explanation).
 
 To explain what we can do with this library, we can take a practical case: we want to filter
 on active products with color 'blue' or 'yellow', in category 'accessory',
 with price between 50 and 100, and which have one tag.  
 
-The filter array representation could be:
+The filter array representation is:
 
 ```php
 use NMarniesse\PommFilter\FilterInterface;
@@ -47,7 +47,7 @@ $array_filters = [
 With an HTTP query `?filter[is_active]=1&filter[color]=blue&filter[color]=yellow&filter[category]=accessory&filter[price_from]=50&filter[price_from]=50&filter[price_to]=100&filter[tag]=_not_null_`
 you can have he same array in php with `$array_filters = $_GET['filter'];`.
 
-You have your filters, now let build the query:
+You have your array filters, now let build the query:
 
 ```php
 use NMarniesse\PommFilter\FilterCondition;
@@ -71,6 +71,7 @@ SQL;
 # Define the available filters and create the Where instance
 $filter_condition = new FilterCondition('p');
 
+$filter_condition->addField(new BasicFilter('color', 'p')); // optional
 $filter_condition->addField(new BooleanFilter('is_active'));
 $filter_condition->addField(new BasicFilter('category_id', 'c'));
 $filter_condition->addField(new BasicFilter('unit_price', 'pr', '>='));
@@ -92,7 +93,7 @@ By default the *FilterCollection* does not contain any filter.
 
 The method `getWhere(array $filters)` convert any associative array into `Where` instance
 When you do a `getWhere(['key1' => 'val1'])`, it assumes that the key1 field exists in your query and 
-build a simple condition query "key1 = $*" with parameter 'val1'.
+build a simple condition query `key1 = $*` with parameter `'val1'`.
 
 If you want to specify a table alias in the condition query, or not use the `=` operator, you have to
 add the filter manually using the `addFilter` method.
@@ -113,10 +114,10 @@ $filter_condition = new FilterCondition('user');
 
 # To use a filter on a field which is not on main table, you have to add it manually
 # For example to add a filter on the field category on table p
-$filter_condition->addField(new BasicField('category', 'p'));
+$filter_condition->addField(new BasicFilter('category', 'p'));
 
 # If you want personnalize your filter name, use second parameter to specify it
-$filter_condition->addField(new BasicField('category', 'p'), 'my_custom_category_filter_name');
+$filter_condition->addField(new BasicFilter('category', 'p'), 'my_custom_category_filter_name');
 ```
 
 

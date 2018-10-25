@@ -1,10 +1,10 @@
 # Simple filter implementation for [Pomm Project](http://www.pomm-project.org/)
 
-Asking a collection of resources is often an action provided with an array of filters. But it's not always
-obvious to handle those filters and build the query accordingly: multi-filters, multi-values for a filter, 
-null values, dates, ...  
-  
-This library provides a simple implementation to build query's condition from array filters.  
+Asking a collection of resources is often given with filter needs. But it's not always
+obvious to handle filters and build the query accordingly: multiple filters on different tables, multiple 
+values for a filter, null values, dates, ...  
+
+This library provides a simple implementation to build query's condition from an array of filters.  
 
 
 ## Requirements and installation
@@ -44,7 +44,7 @@ $array_filters = [
 ];
 ```
 
-With an HTTP query `?filter[is_active]=1&filter[color]=blue&filter[color]=yellow&filter[category]=accessory&filter[price_from]=50&filter[price_from]=50&filter[price_to]=100&filter[tag]=_not_null_`
+With an HTTP query `?filter[is_active]=1&filter[color][]=blue&filter[color][]=yellow&filter[category]=accessory&filter[price_from]=50&filter[price_from]=50&filter[price_to]=100&filter[tag]=_not_null_`
 you can have he same array in php with `$array_filters = $_GET['filter'];`.
 
 You have your array filters, now let build the query:

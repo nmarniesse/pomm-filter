@@ -25,14 +25,17 @@ The library helps you to create an instance of `PommProject\Foundation\Where` th
 (see https://github.com/pomm-project/Foundation/blob/master/documentation/foundation.rst#where-the-condition-builder
 for further explanation).
 
-You want to filter on active products with color 'blue' or 'yellow', in category 'accessory',
-with price between 50 and 100, and which have one tag. The filter array representation could be:
+To explain what we can do with this library, we can take a practical case: we want to filter
+on active products with color 'blue' or 'yellow', in category 'accessory',
+with price between 50 and 100, and which have one tag.  
+
+The filter array representation could be:
 
 ```php
 use NMarniesse\PommFilter\FilterInterface;
 
-$filters = [
-    'is_active'  => true,
+$array_filters = [
+    'is_active'  => '1',
     'color'      => ['blue', 'yellow'],
     'category'   => ['accessory'],
     'price_from' => 50,
@@ -41,13 +44,17 @@ $filters = [
 ];
 ```
 
-Then you can build your query like that:
+With an HTTP query `?filter[is_active]=1&filter[color]=blue&filter[color]=yellow&filter[category]=accessory&filter[price_from]=50&filter[price_from]=50&filter[price_to]=100&filter[tag]=_not_null_`
+you can have he same array in php with `$array_filters = $_GET['filter'];`.
+
+You have your filters, now let build the query:
 
 ```php
 use NMarniesse\PommFilter\FilterCondition;
 use NMarniesse\PommFilter\FilterCondition\FilterType\BasicFilter;
 use NMarniesse\PommFilter\FilterCondition\FilterType\BooleanFilter;
 
+# The sql query with a placeholder for the where condition
 $sql = <<<SQL
 SELECT
   p.id,
@@ -61,7 +68,7 @@ FROM product p
 WHERE {conditions}
 SQL;
 
-# Create filters
+# Define the available filters and create the Where instance
 $filter_condition = new FilterCondition('p');
 
 $filter_condition->addField(new BooleanFilter('is_active'));
@@ -69,17 +76,11 @@ $filter_condition->addField(new BasicFilter('category_id', 'c'));
 $filter_condition->addField(new BasicFilter('unit_price', 'pr', '>='));
 $filter_condition->addField(new BasicFilter('unit_price', 'pr', '<='), 'price_from');
 $filter_condition->addField(new BasicFilter('tag', 'pt'), 'price_to');
+...
 
-# Filter on color 'blue' or 'yellow', with category 'accessory', price between 50 and 100, and have one tag:
-$where = $filter_condition>getWhere([
-    'is_active'  => true,
-    'color'      => ['blue', 'yellow'],
-    'category'   => ['accessory'],
-    'price_from' => 50,
-    'price_to'   => 100,
-    'tag'        => FilterInterface::_not_null_,
-]);
+$where = $filter_condition>getWhere($array_filters);
 
+# Execute the query with Pomm with our instance of Where
 $sql = str_replace('{conditions}', (string) $where, $sql);
 $pomm->getQueryManager()->query($sql, $where->getValues());
 

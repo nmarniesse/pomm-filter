@@ -52,7 +52,7 @@ class FilterCollection extends test
             ->given($tested_instance = new TestedClass(''))
             ->and($tested_instance->addFilter(new LtreeFilter('z', 'alias'), 'a'))
             ->and($tested_instance->addFilter(new BooleanFilter('c', 'alias')))
-            ->and($tested_instance->addFilter(new HstoreFilter('d', 'alias', 'field')))
+            ->and($tested_instance->addFilter(new HstoreFilter('d', 'field', 'alias')))
             ->and($tested_instance->addFilter(new DateTimeFilter('e', 'alias2')))
             ->and($filters = [
                 'a' => 1,

@@ -23,12 +23,12 @@ class AutoCompleteFilter extends BasicFilter implements FilterInterface
     /**
      * BasicFilter constructor.
      *
-     * @param string $name
+     * @param string $field_name
      * @param string $table_name
      */
-    public function __construct($name, $table_name)
+    public function __construct($field_name, $table_name = '')
     {
-        parent::__construct($name, $table_name, 'ILIKE');
+        parent::__construct($field_name, $table_name, 'ILIKE');
     }
 
     /**
@@ -37,7 +37,7 @@ class AutoCompleteFilter extends BasicFilter implements FilterInterface
      * @param mixed $value
      * @return Where
      */
-    protected function getWhereWithSimpleValue($value): Where
+    protected function getWhereWithSimpleValue($value)
     {
         if (substr($value, -1) !== '%') {
             $value = $value . '%';

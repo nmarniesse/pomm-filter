@@ -21,16 +21,27 @@ use NMarniesse\PommFilter\FilterInterface;
 class BooleanFilter extends BasicFilter implements FilterInterface
 {
     /**
+     * BooleanFilter constructor.
+     *
+     * @param string $field_name
+     * @param string $table_name
+     */
+    public function __construct($field_name, $table_name = '')
+    {
+        parent::__construct($field_name, $table_name);
+    }
+
+    /**
      * getWhereWithSimpleValue
      *
      * @param $value
      * @return Where
      */
-    protected function getWhereWithSimpleValue($value): Where
+    protected function getWhereWithSimpleValue($value)
     {
         return Where::create(sprintf(
-            '%s %s%s',
-            in_array($value, [false, 'inactive', 'false', '0']) ? 'NOT' : '',
+            '%s%s%s',
+            in_array($value, [false, 'inactive', 'false', '0', 0], true) ? 'NOT ' : '',
             $this->table_name === '' ? '' : $this->table_name . '.',
             $this->field_name
         ));

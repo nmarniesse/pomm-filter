@@ -27,7 +27,7 @@ interface FilterInterface
      *
      * @return string
      */
-    public function getFieldName(): string;
+    public function getFieldName();
 
     /**
      * getWhere
@@ -35,5 +35,5 @@ interface FilterInterface
      * @param mixed $value
      * @return Where
      */
-    public function getWhere($value): Where;
+    public function getWhere($value);
 }

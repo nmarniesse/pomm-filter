@@ -23,13 +23,13 @@ class LtreeFilter extends BasicFilter implements FilterInterface
     /**
      * LtreeFilter constructor.
      *
-     * @param string $name
+     * @param string $field_name
      * @param string $table_name
      * @param string $operator
      */
-    public function __construct($name, $table_name, $operator = '~')
+    public function __construct($field_name, $table_name = '', $operator = '~')
     {
-        parent::__construct($name, $table_name, $operator);
+        parent::__construct($field_name, $table_name, $operator);
     }
 
     /**
@@ -45,9 +45,9 @@ class LtreeFilter extends BasicFilter implements FilterInterface
      * @param mixed $value
      * @return Where
      */
-    protected function getWhereWithSimpleValue($value): Where
+    protected function getWhereWithSimpleValue($value)
     {
-        if (strlen($value) < 2 || (substr($value, -2) !== '.*' && $this->operator = '~')) {
+        if (strlen($value) < 2 || (substr($value, -2) !== '.*' && $this->operator === '~')) {
             $value .= '.*';
         }
 

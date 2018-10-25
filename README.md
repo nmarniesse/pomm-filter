@@ -191,3 +191,11 @@ Other filter types are available: AutoCompletefilter, BooleanFilter, HstoreFilte
 
 You can create your own filters by implementing the `FilterInterface` interface
 
+
+# Dev
+
+## Run unit tests
+
+```bash
+php ./vendor/bin/atoum -d tests/Unit
+```

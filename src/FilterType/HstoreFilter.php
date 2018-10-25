@@ -23,19 +23,19 @@ class HstoreFilter extends BasicFilter implements FilterInterface
     /**
      * @var string
      */
-    protected $field_name;
+    protected $base_field_name;
 
     /**
      * BasicFilter constructor.
      *
-     * @param string $name
+     * @param string $hstore_key_name
+     * @param string $base_field_name
      * @param string $table_name
-     * @param string $field_name
      */
-    public function __construct($name, $table_name, $field_name)
+    public function __construct($hstore_key_name, $base_field_name, $table_name = '')
     {
-        parent::__construct($name, $table_name, '=');
-        $this->field_name = $field_name;
+        parent::__construct($hstore_key_name, $table_name, '=');
+        $this->base_field_name = $base_field_name;
     }
 
     /**
@@ -44,14 +44,14 @@ class HstoreFilter extends BasicFilter implements FilterInterface
      * @param $value
      * @return Where
      */
-    protected function getWhereWithNonArray($value): Where
+    protected function getWhereWithNonArray($value)
     {
         if ($value === FilterInterface::NOT_NULL_VALUE) {
             return Where::create(
                 sprintf(
                     '%s%s?\'%s\'',
                     $this->table_name === '' ? '' : $this->table_name . '.',
-                    $this->field_name,
+                    $this->base_field_name,
                     $this->field_name
                 )
             );
@@ -60,7 +60,7 @@ class HstoreFilter extends BasicFilter implements FilterInterface
                 sprintf(
                     'NOT %s%s?\'%s\'',
                     $this->table_name === '' ? '' : $this->table_name . '.',
-                    $this->field_name,
+                    $this->base_field_name,
                     $this->field_name
                 )
             );
@@ -70,7 +70,7 @@ class HstoreFilter extends BasicFilter implements FilterInterface
             sprintf(
                 '%s%s->\'%s\' %s $*',
                 $this->table_name === '' ? '' : $this->table_name . '.',
-                $this->field_name,
+                $this->base_field_name,
                 $this->field_name,
                 $this->operator
             ),

@@ -54,7 +54,7 @@ class BasicFilter implements FilterInterface
      *
      * @return string
      */
-    public function getFieldName(): string
+    public function getFieldName()
     {
         return $this->field_name;
     }
@@ -65,7 +65,7 @@ class BasicFilter implements FilterInterface
      * @param mixed $value
      * @return Where
      */
-    public function getWhere($value): Where
+    public function getWhere($value)
     {
         return is_array($value) ? $this->getWhereWithArray($value) : $this->getWhereWithNonArray($value);
     }
@@ -76,7 +76,7 @@ class BasicFilter implements FilterInterface
      * @param array $values
      * @return Where
      */
-    protected function getWhereWithArray($values): Where
+    protected function getWhereWithArray($values)
     {
         $where = new Where();
         foreach ($values as $value) {
@@ -92,7 +92,7 @@ class BasicFilter implements FilterInterface
      * @param $value
      * @return Where
      */
-    protected function getWhereWithNonArray($value): Where
+    protected function getWhereWithNonArray($value)
     {
         if ($value === FilterInterface::NOT_NULL_VALUE) {
             return Where::create(
@@ -121,7 +121,7 @@ class BasicFilter implements FilterInterface
      * @param mixed $value
      * @return Where
      */
-    protected function getWhereWithSimpleValue($value): Where
+    protected function getWhereWithSimpleValue($value)
     {
         return Where::create(
             sprintf(

@@ -26,7 +26,7 @@ class DateTimeFilter extends BasicFilter implements FilterInterface
      * @param $value
      * @return Where
      */
-    protected function getWhereWithSimpleValue($value): Where
+    protected function getWhereWithSimpleValue($value)
     {
         return Where::create(
             sprintf(

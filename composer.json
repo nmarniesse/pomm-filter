@@ -1,0 +1,26 @@
+{
+    "name": "nmarniesse/pomm-filter",
+    "type": "library",
+    "description": "Simple filter implementation for pomm project",
+    "license": "MIT",
+    "authors":  [{ "name": "Nicolas Marniesse", "email": "nicolas.marniesse@gmail.com"}],
+    "require": {
+        "php": ">=5.4.4",
+        "psr/log": "~1.0",
+        "pomm-project/foundation": "~2.0"
+    },
+    "require-dev": {
+        "atoum/atoum" : "*"
+    },
+    "autoload": {
+        "psr-4": {
+            "NMarniesse\\PommFilter\\": "src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "NMarniesse\\PommFilter\\Test\\Unit\\": "tests/Unit"
+        }
+    },
+    "minimum-stability": "stable"
+}

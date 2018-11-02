@@ -21,7 +21,7 @@ composer require nmarniesse/pomm-filter
 
 ## Usage
 
-The library helps you to create an instance of `PommProject\Foundation\Where` that you could use in every pomm query
+The library helps to create an instance of `PommProject\Foundation\Where` that you could use in every pomm query
 (see [here](https://github.com/pomm-project/Foundation/blob/master/documentation/foundation.rst#where-the-condition-builder)
 for further explanation).
 
@@ -44,7 +44,7 @@ $array_filters = [
 ];
 ```
 
-With an HTTP query `?filter[is_active]=1&filter[color][]=blue&filter[color][]=yellow&filter[category]=accessory&filter[price_from]=50&filter[price_from]=50&filter[price_to]=100&filter[tag]=_not_null_`
+With an HTTP query similar to `?filter[is_active]=1&filter[color][]=blue&filter[color][]=yellow&filter[category]=accessory&filter[price_from]=50&filter[price_from]=50&filter[price_to]=100&filter[tag]=_not_null_`
 you can have he same array in php with `$array_filters = $_GET['filter'];`.
 
 You have your array filters, now let build the query:
@@ -62,8 +62,8 @@ SELECT
   c.category_id,
   pr.unit_price
 FROM product p
- INNER JOIN category c ON ...
- INNER JOIN price pr ON ...
+ INNER JOIN category c     ON ...
+ INNER JOIN price pr       ON ...
  LEFT JOIN  product_tag pt ON ...
 WHERE {conditions}
 SQL;
@@ -71,23 +71,25 @@ SQL;
 # Define the available filters and create the Where instance
 $filter_condition = new FilterCondition('p');
 
-$filter_condition->addField(new BasicFilter('color', 'p')); // optional
-$filter_condition->addField(new BooleanFilter('is_active'));
-$filter_condition->addField(new BasicFilter('category_id', 'c'));
-$filter_condition->addField(new BasicFilter('unit_price', 'pr', '>='));
-$filter_condition->addField(new BasicFilter('unit_price', 'pr', '<='), 'price_from');
-$filter_condition->addField(new BasicFilter('tag', 'pt'), 'price_to');
-...
+$filter_condition->addFilter(new BasicFilter('color', 'p')); // optional
+$filter_condition->addFilter(new BooleanFilter('is_active'));
+$filter_condition->addFilter(new BasicFilter('category_id', 'c'));
+$filter_condition->addFilter(new BasicFilter('unit_price', 'pr', '>='));
+$filter_condition->addFilter(new BasicFilter('unit_price', 'pr', '<='), 'price_from');
+$filter_condition->addFilter(new BasicFilter('tag', 'pt'), 'price_to');
+// ...
 
 $where = $filter_condition>getWhere($array_filters);
 
 # Execute the query with Pomm with our instance of Where
 $sql = str_replace('{conditions}', (string) $where, $sql);
-$pomm->getQueryManager()->query($sql, $where->getValues());
+$pomm_session->getQueryManager()->query($sql, $where->getValues());
 
 ```
 
-## FilterCollection
+## Documentation
+
+### FilterCollection
 
 By default the *FilterCollection* does not contain any filter.
 
@@ -114,23 +116,23 @@ $filter_condition = new FilterCondition('user');
 
 # To use a filter on a field which is not on main table, you have to add it manually
 # For example to add a filter on the field category on table p
-$filter_condition->addField(new BasicFilter('category', 'p'));
+$filter_condition->addFilter(new BasicFilter('category', 'p'));
 
 # If you want personnalize your filter name, use second parameter to specify it
-$filter_condition->addField(new BasicFilter('category', 'p'), 'my_custom_category_filter_name');
+$filter_condition->addFilter(new BasicFilter('category', 'p'), 'my_custom_category_filter_name');
 ```
 
 
-## Filter types
+### Filter types
 
 This library provides several filter types to help you to create your own filter collection.
 
 
-### BasicFilter
+#### BasicFilter
 
-As its name indicates, it is useful to create simple filter.  
-But not only because you can specify the operator you want to use (default is `=`). This way you
-can create a lot of specific filter with this one.  
+As its name indicates, this class is useful to create simple filter.  
+However you can specify the operator you want to use (default is `=`) in order to
+customize the behavior of your filter.  
 
 ```php
 use NMarniesse\PommFilter\FilterCondition;
@@ -149,10 +151,10 @@ $filter3 = new BasicFilter('unit_price', 'p', '>=');
 $filter4 = new BasicFilter('unit_price', 'p', '<=');
 
 $filter_condition = new FilterCondition();
-$filter_condition->addField($filter1);
-$filter_condition->addField($filter2);
-$filter_condition->addField($filter3, 'price_from');
-$filter_condition->addField($filter4, 'price_to');
+$filter_condition->addFilter($filter1);
+$filter_condition->addFilter($filter2);
+$filter_condition->addFilter($filter3, 'price_from');
+$filter_condition->addFilter($filter4, 'price_to');
 
 # Filter on color 'blue' or 'yellow', with category 'accessory', and price between 50 and 100
 $filter_condition>getWhere([
@@ -164,7 +166,8 @@ $filter_condition>getWhere([
 
 ```
 
-### DateTimeFilter
+
+#### DateTimeFilter
 
 This filter allow you to use date values.
 
@@ -176,28 +179,87 @@ use NMarniesse\PommFilter\FilterCondition\FilterType\DateTimeFilter;
 $filter1 = new DateTimeFilter('created_at', '', '>=');
 $filter2 = new DateTimeFilter('created_at', '', '<=');
 
-$filter_condition->addField($filter1, 'created_date_from');
-$filter_condition->addField($filter2, 'created_date_to');
+$filter_condition->addFilter($filter1, 'created_date_from');
+$filter_condition->addFilter($filter2, 'created_date_to');
 
 # Filter on color 'blue' or 'yellow', with category 'accessory', and price between 50 and 100
 $filter_condition>getWhere([
     'created_date_from' => '2010-01-01T00:00:00+00',
     'created_date_to'   => '2010-12-31T23:59:59+00',
 ]);
-
 ```
 
-### Others
+
+#### BooleanFilter
+
+This filter is used to handle boolean fields.
+
+```php
+use NMarniesse\PommFilter\FilterCondition;
+use NMarniesse\PommFilter\FilterCondition\FilterType\DateTimeFilter;
+
+# Create a BasicFilter
+$filter1 = new BooleanFilter('is_new');
+$filter_condition->addFilter($filter1);
+
+# Filter on true value
+$filter_condition>getWhere([
+    'is_new' => true, // Any value different from false, 'inactive', 'false', '0', 0
+]);
+
+# Filter on true value
+$filter_condition>getWhere([
+    'is_new' => false, // Any value among the values false, 'inactive', 'false', '0', 0
+]);
+```
+
+
+#### HstoreFilter
+
+This filter is used to handle hstore fields.
+
+Given we have a hstore field full_address which contains keys like street, city, postal code, country, etc...
+
+```php
+use NMarniesse\PommFilter\FilterCondition;
+use NMarniesse\PommFilter\FilterCondition\FilterType\DateTimeFilter;
+
+# Create a BasicFilter
+$filter1 = new BooleanFilter('city', 'full_address');
+$filter2 = new BooleanFilter('country_code', 'full_address');
+$filter_condition->addFilter($filter1);
+$filter_condition->addFilter($filter2);
+
+# Filter on city value
+$filter_condition>getWhere([
+    'city' => 'Paris',
+]);
+
+# Filter on country_code value
+$filter_condition>getWhere([
+    'country_code' => 'FR',
+]);
+```
+
+
+#### LtreeFilter
+
+This filter is used to handle ltree fields. As ltree is commonly used to handle tree views, you can filter on
+a value and all its descendants using this filter. If you don't want to filter on the descendants the BasicFilter
+is enough.
+
+
+#### Others
 
 Other filter types are available: AutoCompletefilter, BooleanFilter, HstoreFilter, LtreeFilter, ...  
 
 You can create your own filters by implementing the `FilterInterface` interface
 
 
-# Dev
+## Dev
 
-## Run unit tests
+### Run unit tests
 
 ```bash
-php ./vendor/bin/atoum -d tests/Unit
+make unit-tests
 ```

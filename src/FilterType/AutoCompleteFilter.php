@@ -28,28 +28,6 @@ class AutoCompleteFilter extends BasicFilter implements FilterInterface
      */
     public function __construct($field_name, $table_name = '')
     {
-        parent::__construct($field_name, $table_name, 'ILIKE');
-    }
-
-    /**
-     * getWhereWithSimpleValue
-     *
-     * @param mixed $value
-     * @return Where
-     */
-    protected function getWhereWithSimpleValue($value)
-    {
-        if (substr($value, -1) !== '%') {
-            $value = $value . '%';
-        }
-
-        return Where::create(
-            sprintf(
-                '%s%s ILIKE $*',
-                $this->table_name === '' ? '' : $this->table_name . '.',
-                $this->field_name
-            ),
-            [$value]
-        );
+        parent::__construct($field_name, $table_name, '~*');
     }
 }

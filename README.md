@@ -9,10 +9,7 @@ This library provides a simple implementation to build query's condition from an
 
 ## Requirements and installation
 
-The requirements are the same as Pomm Project Foundation v2:
-
-- php >=5.5
-- Postgresql >= 9.2
+- php >=5.4
 
 
 ```bash
@@ -87,13 +84,20 @@ $pomm_session->getQueryManager()->query($sql, $where->getValues());
 
 ```
 
+
+**Important note**
+
+Even if the generated *Where* condition protects the query against SQL injection, please note you
+must clean and validate the data coming from users, according to your business rules.
+
+
 ## Documentation
 
 ### FilterCollection
 
 By default the *FilterCollection* does not contain any filter.
 
-The method `getWhere(array $filters)` convert any associative array into `Where` instance
+The method `getWhere($filters)` convert any associative array into `Where` instance
 When you do a `getWhere(['key1' => 'val1'])`, it assumes that the key1 field exists in your query and 
 build a simple condition query `key1 = $*` with parameter `'val1'`.
 
@@ -225,8 +229,8 @@ use NMarniesse\PommFilter\FilterCondition;
 use NMarniesse\PommFilter\FilterCondition\FilterType\DateTimeFilter;
 
 # Create a BasicFilter
-$filter1 = new BooleanFilter('city', 'full_address');
-$filter2 = new BooleanFilter('country_code', 'full_address');
+$filter1 = new HstoreFilter('city', 'full_address');
+$filter2 = new HstoreFilter('country_code', 'full_address');
 $filter_condition->addFilter($filter1);
 $filter_condition->addFilter($filter2);
 

@@ -48,8 +48,8 @@ You have your array filters, now let build the query:
 
 ```php
 use NMarniesse\PommFilter\FilterCondition;
-use NMarniesse\PommFilter\FilterCondition\FilterType\BasicFilter;
-use NMarniesse\PommFilter\FilterCondition\FilterType\BooleanFilter;
+use NMarniesse\PommFilter\FilterType\BasicFilter;
+use NMarniesse\PommFilter\FilterType\BooleanFilter;
 
 # The sql query with a placeholder for the where condition
 $sql = <<<SQL
@@ -108,7 +108,7 @@ Examples:
 
 ```php
 use NMarniesse\PommFilter\FilterCondition;
-use NMarniesse\PommFilter\FilterCondition\FilterType\BasicFilter;
+use NMarniesse\PommFilter\FilterType\BasicFilter;
 
 # Create a filter condition.
 # When you pass a filter {"key1": "value1"}, it assumes that the field *key1* exists in your query
@@ -140,7 +140,7 @@ customize the behavior of your filter.
 
 ```php
 use NMarniesse\PommFilter\FilterCondition;
-use NMarniesse\PommFilter\FilterCondition\FilterType\BasicFilter;
+use NMarniesse\PommFilter\FilterType\BasicFilter;
 
 # Create a BasicFilter
 $filter1 = new BasicFilter('color');
@@ -177,9 +177,9 @@ This filter allow you to use date values.
 
 ```php
 use NMarniesse\PommFilter\FilterCondition;
-use NMarniesse\PommFilter\FilterCondition\FilterType\DateTimeFilter;
+use NMarniesse\PommFilter\FilterType\DateTimeFilter;
 
-# Create a BasicFilter
+# Create DateTimeFilter
 $filter1 = new DateTimeFilter('created_at', '', '>=');
 $filter2 = new DateTimeFilter('created_at', '', '<=');
 
@@ -200,9 +200,9 @@ This filter is used to handle boolean fields.
 
 ```php
 use NMarniesse\PommFilter\FilterCondition;
-use NMarniesse\PommFilter\FilterCondition\FilterType\DateTimeFilter;
+use NMarniesse\PommFilter\FilterType\DateTimeFilter;
 
-# Create a BasicFilter
+# Create BooleanFilter
 $filter1 = new BooleanFilter('is_new');
 $filter_condition->addFilter($filter1);
 
@@ -226,9 +226,9 @@ Given we have a hstore field full_address which contains keys like street, city,
 
 ```php
 use NMarniesse\PommFilter\FilterCondition;
-use NMarniesse\PommFilter\FilterCondition\FilterType\DateTimeFilter;
+use NMarniesse\PommFilter\FilterType\HstoreFilter;
 
-# Create a BasicFilter
+# Create HstoreFilter
 $filter1 = new HstoreFilter('city', 'full_address');
 $filter2 = new HstoreFilter('country_code', 'full_address');
 $filter_condition->addFilter($filter1);
@@ -253,11 +253,33 @@ a value and all its descendants using this filter. If you don't want to filter o
 is enough.
 
 
-#### Others
+#### RangeFilter
 
-Other filter types are available: AutoCompletefilter, BooleanFilter, HstoreFilter, LtreeFilter, ...  
+This filter is used to handle range fields. The value could be a single value or a range of values
+identified by a *NMarniesse\PommFilter\RangeValue* object. In both cases, the filter tests the value 
+is included into the range field.
 
-You can create your own filters by implementing the `FilterInterface` interface
+
+```php
+use NMarniesse\PommFilter\FilterCondition;
+use NMarniesse\PommFilter\FilterType\RangeFilter;
+use NMarniesse\PommFilter\RangeValue;
+
+# Create a RangeFilter
+$filter1 = new RangeFilter('score_range');
+$filter2 = new RangeFilter('lifetime');
+$filter_condition->addFilter($filter1);
+$filter_condition->addFilter($filter2);
+
+# Filter entities which have a score 10 and be active in 2010 january
+$filter_condition>getWhere([
+    'score_range' => 10,
+    'lifetime'    => new RangeValue(
+        new \DateTime('2010-01-01 00:00:00+00:00'),
+        new \DateTime('2010-12-31 23:59:59+00:00')
+    ),
+]);
+```
 
 
 ## Dev

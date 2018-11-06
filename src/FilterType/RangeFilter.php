@@ -9,7 +9,7 @@
  */
 namespace NMarniesse\PommFilter\FilterType;
 
-use NMarniesse\PommFilter\RangeValue;
+use NMarniesse\PommFilter\ValueType\RangeValue;
 use PommProject\Foundation\Where;
 
 /**

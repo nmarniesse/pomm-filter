@@ -12,7 +12,7 @@ namespace NMarniesse\PommFilter\Test\Unit\FilterType;
 use atoum\test;
 use NMarniesse\PommFilter\FilterInterface;
 use NMarniesse\PommFilter\FilterType\RangeFilter as TestedClass;
-use NMarniesse\PommFilter\RangeValue;
+use NMarniesse\PommFilter\ValueType\RangeValue;
 
 /**
  * Class RangeFilter

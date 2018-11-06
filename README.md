@@ -256,14 +256,14 @@ is enough.
 #### RangeFilter
 
 This filter is used to handle range fields. The value could be a single value or a range of values
-identified by a *NMarniesse\PommFilter\RangeValue* object. In both cases, the filter tests the value 
+identified by a *NMarniesse\PommFilter\ValueType\RangeValue* object. In both cases, the filter tests the value 
 is included into the range field.
 
 
 ```php
 use NMarniesse\PommFilter\FilterCondition;
 use NMarniesse\PommFilter\FilterType\RangeFilter;
-use NMarniesse\PommFilter\RangeValue;
+use NMarniesse\PommFilter\ValueType\RangeValue;
 
 # Create a RangeFilter
 $filter1 = new RangeFilter('score_range');

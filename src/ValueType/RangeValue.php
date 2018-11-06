@@ -7,12 +7,12 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace NMarniesse\PommFilter;
+namespace NMarniesse\PommFilter\ValueType;
 
 /**
  * Class RangeValue
  *
- * @package NMarniesse\PommFilter
+ * @package NMarniesse\PommFilter\ValueType
  * @author  Nicolas Marniesse <nicolas.marniesse@phc-holding.com>
  */
 class RangeValue
@@ -27,7 +27,6 @@ class RangeValue
      */
     private $to_value;
 
-
     /**
      * RangeValue constructor.
      *
@@ -36,6 +35,18 @@ class RangeValue
      */
     public function __construct($from_value, $to_value)
     {
+        if (!is_numeric($from_value) && !$from_value instanceof \DateTime) {
+            throw new \InvalidArgumentException('Values must be numeric or an instance of DateTime.');
+        }
+
+        if (!is_numeric($to_value) && !$to_value instanceof \DateTime) {
+            throw new \InvalidArgumentException('Values must be numeric or an instance of DateTime.');
+        }
+
+        if (is_numeric($to_value) !== is_numeric($from_value)) {
+            throw new \InvalidArgumentException('Values have not the same type.');
+        }
+
         $this->from_value = $from_value;
         $this->to_value   = $to_value;
     }
@@ -55,7 +66,7 @@ class RangeValue
             );
         }
 
-        return sprintf('[%d, %d]', $this->from_value, $this->to_value);
+        return sprintf('[%s, %s]', $this->from_value, $this->to_value);
     }
 
     /**

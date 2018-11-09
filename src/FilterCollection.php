@@ -47,9 +47,9 @@ class FilterCollection
      * @param string|null     $filter_name
      * @return FilterCollection
      */
-    public function addFilter(FilterInterface $filter, $filter_name = null): self
+    public function addFilter(FilterInterface $filter, $filter_name = null)
     {
-        $this->filters[$filter_name ?? $filter->getFieldName()] = $filter;
+        $this->filters[$filter_name !== null ? $filter_name : $filter->getFieldName()] = $filter;
 
         return $this;
     }
@@ -59,7 +59,7 @@ class FilterCollection
      *
      * @return array
      */
-    public function getFilterNames(): array
+    public function getFilterNames()
     {
         return array_keys($this->filters);
     }
@@ -70,7 +70,7 @@ class FilterCollection
      * @param array $filters
      * @return Where
      */
-    public function getWhere($filters): Where
+    public function getWhere($filters)
     {
         $where = new Where();
         foreach ($filters as $name => $value) {
@@ -87,9 +87,12 @@ class FilterCollection
      * @param mixed  $value
      * @return Where
      */
-    private function getWhereForFilter($name, $value): Where
+    private function getWhereForFilter($name, $value)
     {
-        $filter = $this->filters[$name] ?? new BasicFilter($name, $this->table_name);
+        $filter = array_key_exists($name, $this->filters)
+            ? $this->filters[$name]
+            : new BasicFilter($name, $this->table_name)
+        ;
 
         return $filter->getWhere($value);
     }

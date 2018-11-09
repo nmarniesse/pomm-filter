@@ -42,20 +42,20 @@ class AutoCompleteFilter extends test
             ->assert('Get condition with simple value.')
             ->given($instance = new TestedClass('field'))
             ->when($where = $instance->getWhere(['value1']))
-                ->string((string) $where)->isEqualTo('field ~* $*')
-                ->array($where->getValues())->isEqualTo(['value1'])
+                ->string((string) $where)->isEqualTo('field ILIKE $*')
+                ->array($where->getValues())->isEqualTo(['value1%'])
 
             ->assert('Get condition with multiple value.')
             ->given($instance = new TestedClass('field'))
             ->when($where = $instance->getWhere(['value1', 'value2']))
-                ->string((string) $where)->isEqualTo('(field ~* $* OR field ~* $*)')
-                ->array($where->getValues())->isEqualTo(['value1', 'value2'])
+                ->string((string) $where)->isEqualTo('(field ILIKE $* OR field ILIKE $*)')
+                ->array($where->getValues())->isEqualTo(['value1%', 'value2%'])
 
             ->assert('Get condition with specific table name.')
             ->given($instance = new TestedClass('field', 't'))
             ->when($where = $instance->getWhere(['value1', 'value2']))
-                ->string((string) $where)->isEqualTo('(t.field ~* $* OR t.field ~* $*)')
-                ->array($where->getValues())->isEqualTo(['value1', 'value2'])
+                ->string((string) $where)->isEqualTo('(t.field ILIKE $* OR t.field ILIKE $*)')
+                ->array($where->getValues())->isEqualTo(['value1%', 'value2%'])
         ;
     }
 }

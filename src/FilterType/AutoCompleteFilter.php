@@ -21,13 +21,37 @@ use NMarniesse\PommFilter\FilterInterface;
 class AutoCompleteFilter extends BasicFilter implements FilterInterface
 {
     /**
-     * BasicFilter constructor.
+     * AutoCompleteFilter constructor.
      *
      * @param string $field_name
      * @param string $table_name
+     * @param string $operator
      */
-    public function __construct($field_name, $table_name = '')
+    public function __construct($field_name, $table_name = '', $operator = 'ILIKE')
     {
-        parent::__construct($field_name, $table_name, '~*');
+        parent::__construct($field_name, $table_name, $operator);
+    }
+
+    /**
+     * getWhereWithSimpleValue
+     *
+     * @param mixed $value
+     * @return Where
+     */
+    protected function getWhereWithSimpleValue($value)
+    {
+        if (in_array(strtolower($this->operator), ['like', 'ilike', '~~', '~~*'])) {
+            $value .= '%';
+        }
+
+        return Where::create(
+            sprintf(
+                '%s%s %s $*',
+                $this->table_name === '' ? '' : $this->table_name . '.',
+                $this->field_name,
+                $this->operator
+            ),
+            [$value]
+        );
     }
 }
